@@ -94,16 +94,6 @@ session_start();
         background-color: #084298;
     }
 
-    .success {
-        color: green;
-        font-weight: bold;
-    }
-
-    .error {
-        color: red;
-        font-weight: bold;
-    }
-
     .header {
         background-color: #084298;
         color: white;
@@ -134,41 +124,42 @@ session_start();
         <h1>Welcome, Head of Department</h1>
     </div>
 
-    <!-- Student Registration -->
-<section id="students">
-    <h3>👩‍🎓 Register New Student</h3>
-    <form method="POST" action="">
-        <input type="hidden" name="action" value="add_student">
-        <input type="text" name="full_name" placeholder="Full Name" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Password" required>
-        
-        <label>Select Course:</label>
-        <select name="course_id" required>
-            <option value="">Select Course</option>
-            <?php
-            $courses = $conn->query("SELECT * FROM courses");
-            while ($c = $courses->fetch_assoc()) {
-                echo "<option value='{$c['course_id']}'>{$c['course_name']}</option>";
-            }
-            ?>
-        </select>
+    <!-- Register Student -->
+    <section id="students">
+        <h3>👩‍🎓 Register New Student</h3>
+        <form method="POST" action="">
+            <input type="hidden" name="action" value="add_student">
+            <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
 
-        <label>Select Semester:</label>
-        <select name="semester_id" required>
-            <option value="">Select Semester</option>
-            <?php
-            $semesters = $conn->query("SELECT * FROM semesters");
-            while ($s = $semesters->fetch_assoc()) {
-                echo "<option value='{$s['semester_id']}'>{$s['semester_name']}</option>";
-            }
-            ?>
-        </select>
+            <label>Select Course:</label>
+            <select name="course_id" required>
+                <option value="">Select Course</option>
+                <?php
+                $courses = $conn->query("SELECT * FROM courses");
+                while ($c = $courses->fetch_assoc()) {
+                    echo "<option value='{$c['course_id']}'>{$c['course_name']}</option>";
+                }
+                ?>
+            </select>
 
-        <button type="submit">Register Student</button>
-    </form>
-</section>
-    <!-- Lecturer Registration -->
+            <label>Select Semester:</label>
+            <select name="semester_id" required>
+                <option value="">Select Semester</option>
+                <?php
+                $semesters = $conn->query("SELECT * FROM semesters");
+                while ($s = $semesters->fetch_assoc()) {
+                    echo "<option value='{$s['semester_id']}'>{$s['semester_name']}</option>";
+                }
+                ?>
+            </select>
+
+            <button type="submit">Register Student</button>
+        </form>
+    </section>
+
+    <!-- Register Lecturer -->
     <section id="lecturers">
         <h3>👨‍🏫 Register New Lecturer</h3>
         <form method="POST" action="">
@@ -176,6 +167,8 @@ session_start();
             <input type="text" name="full_name" placeholder="Full Name" required>
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
+
+            <label>Select Department:</label>
             <select name="department_id" required>
                 <option value="">Select Department</option>
                 <?php
@@ -185,6 +178,7 @@ session_start();
                 }
                 ?>
             </select>
+
             <button type="submit">Register Lecturer</button>
         </form>
     </section>
@@ -196,6 +190,8 @@ session_start();
             <input type="hidden" name="action" value="add_course">
             <input type="text" name="course_code" placeholder="Course Code" required>
             <input type="text" name="course_name" placeholder="Course Name" required>
+
+            <label>Select Department:</label>
             <select name="department_id" required>
                 <option value="">Select Department</option>
                 <?php
@@ -205,6 +201,7 @@ session_start();
                 }
                 ?>
             </select>
+
             <button type="submit">Add Course</button>
         </form>
     </section>
@@ -216,6 +213,8 @@ session_start();
             <input type="hidden" name="action" value="add_unit">
             <input type="text" name="unit_code" placeholder="Unit Code" required>
             <input type="text" name="unit_name" placeholder="Unit Name" required>
+
+            <label>Select Course:</label>
             <select name="course_id" required>
                 <option value="">Select Course</option>
                 <?php
@@ -225,39 +224,44 @@ session_start();
                 }
                 ?>
             </select>
+
             <button type="submit">Add Unit</button>
         </form>
     </section>
-
 </div>
 </body>
 </html>
 
 <?php
-if ($action == 'add_student') {
-    $stmt = $conn->prepare("INSERT INTO students (full_name, email, password, course_id, semester_id) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssii", $_POST['full_name'], $_POST['email'], $_POST['password'], $_POST['course_id'], $_POST['semester_id']);
-    $stmt->execute();
-    echo "<script>alert('✅ Student registered successfully!');</script>";
-}
-    if ($action == 'add_lecturer') {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
+    $action = $_POST['action'];
+
+    if ($action === 'add_student') {
+        $stmt = $conn->prepare("INSERT INTO students (full_name, email, password, course_id, semester_id) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssii", $_POST['full_name'], $_POST['email'], $_POST['password'], $_POST['course_id'], $_POST['semester_id']);
+        $stmt->execute();
+        echo "<script>alert('✅ Student registered successfully!');</script>";
+    }
+
+    elseif ($action === 'add_lecturer') {
         $stmt = $conn->prepare("INSERT INTO lecturers (full_name, email, password, department_id) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("sssi", $_POST['full_name'], $_POST['email'], $_POST['password'], $_POST['department_id']);
         $stmt->execute();
         echo "<script>alert('✅ Lecturer registered successfully!');</script>";
     }
 
-    if ($action == 'add_course') {
+    elseif ($action === 'add_course') {
         $stmt = $conn->prepare("INSERT INTO courses (course_code, course_name, department_id) VALUES (?, ?, ?)");
         $stmt->bind_param("ssi", $_POST['course_code'], $_POST['course_name'], $_POST['department_id']);
         $stmt->execute();
         echo "<script>alert('✅ Course added successfully!');</script>";
     }
 
-    if ($action == 'add_unit') {
-    $stmt = $conn->prepare("INSERT INTO units (unit_code, unit_name, course_id) VALUES (?, ?, ?)");
-    $stmt->bind_param("ssi", $_POST['unit_code'], $_POST['unit_name'], $_POST['course_id']);
-    $stmt->execute();
-    echo "<script>alert('✅ Unit added successfully!');</script>";
+    elseif ($action === 'add_unit') {
+        $stmt = $conn->prepare("INSERT INTO units (unit_code, unit_name, course_id) VALUES (?, ?, ?)");
+        $stmt->bind_param("ssi", $_POST['unit_code'], $_POST['unit_name'], $_POST['course_id']);
+        $stmt->execute();
+        echo "<script>alert('✅ Unit added successfully!');</script>";
+    }
 }
 ?>

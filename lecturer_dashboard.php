@@ -78,7 +78,7 @@ include 'db_connect.php';
     <a href="lecturer_view_timetable.php">📅 View Timetables</a>
     <a href="lecturer_review_timetable.php">✅ Review Timetable</a>
     <a href="lecturer_confirm_timetable.php">💬 Confirm Timetable</a>
-    <a class='change' href='request_change.php?tid={$row['timetable_id']}'></a>
+    <a class='change' href='request_change.php?tid={$row['timetable_id']}' </a>
     <a href="login.php" class="logout">🚪 Logout</a>
 </div>
 
