@@ -95,6 +95,7 @@ session_start();
         border-radius: 5px;
         cursor: pointer;
         text-decoration: none;
+        border: none;
     }
     .approve-btn:hover {
         background: #218838;
@@ -104,11 +105,6 @@ session_start();
         font-weight: bold;
     }
 </style>
-<script>
-function approveTimetable(button) {
-    button.parentElement.innerHTML = "<span class='approved-label'>✅ Approved</span>";
-}
-</script>
 </head>
 <body>
 
@@ -226,7 +222,7 @@ function approveTimetable(button) {
         <?php
         $query = "
             SELECT t.timetable_id, t.day_of_week, t.start_time, t.end_time,
-                   u.unit_name, c.course_name, r.room_name
+                   u.unit_name, c.course_name, r.room_name, t.hod_approval
             FROM timetables t
             JOIN units u ON t.unit_id = u.unit_id
             JOIN courses c ON t.course_id = c.course_id
@@ -243,7 +239,7 @@ function approveTimetable(button) {
                         <th>Unit</th>
                         <th>Course</th>
                         <th>Room</th>
-                        <th>Action</th>
+                        <th>Status</th>
                     </tr>";
             while ($row = $result->fetch_assoc()) {
                 echo "<tr>
@@ -252,8 +248,16 @@ function approveTimetable(button) {
                         <td>{$row['unit_name']}</td>
                         <td>{$row['course_name']}</td>
                         <td>{$row['room_name']}</td>
-                        <td><button class='approve-btn' onclick='approveTimetable(this)'>Approve</button></td>
-                      </tr>";
+                        <td>";
+                if ($row['hod_approval'] == 'Approved') {
+                    echo "<span class='approved-label'>✅ Approved</span>";
+                } else {
+                    echo "<form method='POST' action='' style='margin:0;'>
+                            <input type='hidden' name='approve_timetable_id' value='{$row['timetable_id']}'>
+                            <button type='submit' class='approve-btn'>Approve</button>
+                          </form>";
+                }
+                echo "</td></tr>";
             }
             echo "</table>";
         } else {
@@ -267,42 +271,55 @@ function approveTimetable(button) {
 </html>
 
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
-    $action = $_POST['action'];
+// Handle all POST requests
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    if ($action == 'add_student') {
-        $stmt = $conn->prepare("INSERT INTO students (full_name, email, password, course_id, semester_id) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssii", $_POST['full_name'], $_POST['email'], $_POST['password'], $_POST['course_id'], $_POST['semester_id']);
-        $stmt->execute();
-        echo "<script>alert('✅ Student registered successfully!');</script>";
+    // Approval button clicked
+    if (isset($_POST['approve_timetable_id'])) {
+        $timetableId = intval($_POST['approve_timetable_id']);
+        $conn->query("UPDATE timetables SET hod_approval='Approved' WHERE timetable_id=$timetableId");
+        echo "<script>alert('✅ Timetable approved successfully!'); window.location.href='hod_dashboard.php#timetable';</script>";
+        exit;
     }
 
-    if ($action == 'add_lecturer') {
-        $stmt = $conn->prepare("INSERT INTO lecturers (full_name, email, password, department_id) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("sssi", $_POST['full_name'], $_POST['email'], $_POST['password'], $_POST['department_id']);
-        $stmt->execute();
-        echo "<script>alert('✅ Lecturer registered successfully!');</script>";
-    }
+    // Handle all other actions
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
 
-    if ($action == 'add_department') {
-        $stmt = $conn->prepare("INSERT INTO departments (department_name) VALUES (?)");
-        $stmt->bind_param("s", $_POST['department_name']);
-        $stmt->execute();
-        echo "<script>alert('✅ Department added successfully!');</script>";
-    }
+        if ($action == 'add_student') {
+            $stmt = $conn->prepare("INSERT INTO students (full_name, email, password, course_id, semester_id) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssii", $_POST['full_name'], $_POST['email'], $_POST['password'], $_POST['course_id'], $_POST['semester_id']);
+            $stmt->execute();
+            echo "<script>alert('✅ Student registered successfully!');</script>";
+        }
 
-    if ($action == 'add_course') {
-        $stmt = $conn->prepare("INSERT INTO courses (course_code, course_name, department_id) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $_POST['course_code'], $_POST['course_name'], $_POST['department_id']);
-        $stmt->execute();
-        echo "<script>alert('✅ Course added successfully!');</script>";
-    }
+        if ($action == 'add_lecturer') {
+            $stmt = $conn->prepare("INSERT INTO lecturers (full_name, email, password, department_id) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("sssi", $_POST['full_name'], $_POST['email'], $_POST['password'], $_POST['department_id']);
+            $stmt->execute();
+            echo "<script>alert('✅ Lecturer registered successfully!');</script>";
+        }
 
-    if ($action == 'add_unit') {
-        $stmt = $conn->prepare("INSERT INTO units (unit_code, unit_name, course_id) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $_POST['unit_code'], $_POST['unit_name'], $_POST['course_id']);
-        $stmt->execute();
-        echo "<script>alert('✅ Unit added successfully!');</script>";
+        if ($action == 'add_department') {
+            $stmt = $conn->prepare("INSERT INTO departments (department_name) VALUES (?)");
+            $stmt->bind_param("s", $_POST['department_name']);
+            $stmt->execute();
+            echo "<script>alert('✅ Department added successfully!');</script>";
+        }
+
+        if ($action == 'add_course') {
+            $stmt = $conn->prepare("INSERT INTO courses (course_code, course_name, department_id) VALUES (?, ?, ?)");
+            $stmt->bind_param("ssi", $_POST['course_code'], $_POST['course_name'], $_POST['department_id']);
+            $stmt->execute();
+            echo "<script>alert('✅ Course added successfully!');</script>";
+        }
+
+        if ($action == 'add_unit') {
+            $stmt = $conn->prepare("INSERT INTO units (unit_code, unit_name, course_id) VALUES (?, ?, ?)");
+            $stmt->bind_param("ssi", $_POST['unit_code'], $_POST['unit_name'], $_POST['course_id']);
+            $stmt->execute();
+            echo "<script>alert('✅ Unit added successfully!');</script>";
+        }
     }
 }
 ?>
