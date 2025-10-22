@@ -120,6 +120,7 @@ function approveTimetable(button) {
     <a href="#courses">📘 Add Course</a>
     <a href="#units">📗 Add Unit</a>
     <a href="#timetable">🕒 View / Approve Timetable</a>
+    <a href="hod_report.php">📊 Department Report</a>
     <a href="logout.php">🚪 Logout</a>
 </div>
 
