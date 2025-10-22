@@ -15,12 +15,12 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'dean') {
   <title>Dean Dashboard | Sunrise SmartScheduler</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: #f4f5fb; }
-    .sidebar { width: 250px; background-color: #6a1b9a; color: white; height: 100vh; padding-top: 30px; position: fixed; }
+    .sidebar { width: 250px; background-color: #311045ff; color: white; height: 100vh; padding-top: 30px; position: fixed; }
     .sidebar h2 { text-align: center; margin-bottom: 30px; }
     .sidebar a { display: block; color: white; text-decoration: none; padding: 14px 20px; margin: 5px 15px; border-radius: 8px; }
-    .sidebar a:hover { background-color: #4a0072; }
+    .sidebar a:hover { background-color: #2d0b3fff; }
     .content { margin-left: 260px; padding: 30px; flex-grow: 1; }
-    h1 { color: #6a1b9a; }
+    h1 { color: #35104cff; }
     p { color: #333; }
   </style>
 </head>

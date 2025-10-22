@@ -18,7 +18,7 @@ include 'db_connect.php';
         .sidebar {
             width: 220px;
             height: 100vh;
-            background-color: #1e88e5;
+            background-color: #48657eff;
             color: white;
             position: fixed;
             padding: 20px;
@@ -38,7 +38,7 @@ include 'db_connect.php';
             transition: background 0.3s;
         }
         .sidebar a:hover {
-            background-color: #1565c0;
+            background-color: #3c5066ff;
         }
         .content {
             margin-left: 240px;
@@ -59,7 +59,7 @@ include 'db_connect.php';
             text-align: left;
         }
         th {
-            background-color: #1e88e5;
+            background-color: #3b566eff;
             color: white;
         }
         tr:hover {

@@ -17,12 +17,12 @@ $email = $_SESSION['email'];
   <title>Student Dashboard | Sunrise SmartScheduler</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background-color: #f5f7fb; }
-    .sidebar { width: 250px; background-color: #007bff; color: white; height: 100vh; padding-top: 30px; position: fixed; }
+    .sidebar { width: 250px; background-color: #3e128aff; color: white; height: 100vh; padding-top: 30px; position: fixed; }
     .sidebar h2 { text-align: center; margin-bottom: 30px; }
     .sidebar a { display: block; color: white; text-decoration: none; padding: 14px 20px; margin: 5px 15px; border-radius: 8px; }
-    .sidebar a:hover { background-color: #0056b3; }
+    .sidebar a:hover { background-color: #230c58ff; }
     .content { margin-left: 260px; padding: 30px; flex-grow: 1; }
-    h1 { color: #007bff; }
+    h1 { color: #1c0f65ff; }
     iframe { width: 100%; height: 80vh; border: none; border-radius: 10px; background: white; }
   </style>
 </head>
